@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+header {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  p {
+    margin: 0;
+  }
+}
+
+footer {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  text-align: right;
+
+  p {
+    margin: 0;
+    a {
+      color: currentColor;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
