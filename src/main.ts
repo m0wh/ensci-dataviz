@@ -18,7 +18,7 @@ scene.background = new Color(0xEEEEEE)
 
 camera.position.x = CONFIG.n * 4
 camera.position.y = CONFIG.n * 4
-camera.position.z = CONFIG.n * 4
+camera.position.z = CONFIG.n * -4
 
 const { composer } = fx({ renderer, scene, camera })
 
@@ -37,6 +37,12 @@ const bars = values.map((row, x) => row.map((val, y) => {
 
 bars.forEach(row => row.forEach(bar => scene.add(bar.mesh)))
 
+const biggeo = new BoxBufferGeometry(0.1, 50, 0.1)
+const bigmat = new MeshPhongMaterial({ color: 0xff0000 })
+const bigbar = new Mesh(biggeo, bigmat)
+bigbar.visible = false
+scene.add(bigbar)
+
 function getData () {
   fetch('https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&rows=1400')
     .then(res => res.json())
@@ -46,7 +52,7 @@ function getData () {
         const row = []
         for (let y = -CONFIG.n; y < CONFIG.n; y++) {
           const velibsInTile = velib.records.filter(station => {
-            const isInX = x === Math.floor(range(station.geometry.coordinates[0], 2.204614, 2.485008, -CONFIG.n, CONFIG.n))
+            const isInX = x === Math.floor(range(station.geometry.coordinates[0], 2.485008, 2.204614, -CONFIG.n, CONFIG.n))
             const isInY = y === Math.floor(range(station.geometry.coordinates[1], 48.767656, 48.955623, -CONFIG.n, CONFIG.n))
             return isInX && isInY
           }).reduce((acc, val) => acc + val.fields.numbikesavailable, 0)
@@ -65,9 +71,18 @@ function getData () {
       const biggest = velib.records.sort((a, b) => b.fields.numbikesavailable - a.fields.numbikesavailable)[0]
       setSpanText('stat', biggest.fields.name)
       setSpanText('maxstatvelibs', biggest.fields.numbikesavailable)
+
+      bigbar.position.set(
+        range(biggest.geometry.coordinates[0], 2.485008, 2.204614, -CONFIG.n, CONFIG.n),
+        range(biggest.geometry.coordinates[1], 48.767656, 48.955623, -CONFIG.n, CONFIG.n),
+        0
+      )
     })
     .catch(console.error)
 }
+
+document.getElementById('stat').addEventListener('mouseenter', e => { bigbar.visible = true })
+document.getElementById('stat').addEventListener('mouseleave', e => { bigbar.visible = false })
 
 getData()
 setInterval(getData, 60000)
@@ -81,11 +96,12 @@ const planeMat = new MeshPhongMaterial({
 const plane = new Mesh(planeGeo, planeMat)
 plane.position.y = -0.01
 plane.rotation.x = Math.PI / 2
+plane.rotation.y = Math.PI
 
 const sun = new DirectionalLight(0xFFFFFF, 1.2)
 const ambient = new AmbientLight(0xFFFFFF, 0.5)
 sun.target.position.set(0, 0, 0)
-sun.position.set(1000, 300, 500)
+sun.position.set(1000, 300, -500)
 
 scene.add(plane)
 scene.add(sun)
