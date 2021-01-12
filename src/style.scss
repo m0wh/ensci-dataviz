@@ -11,6 +11,19 @@ header {
   p {
     margin: 0;
   }
+
+  button {
+    margin: 10px 5px 0 0;
+    border-radius: 30px;
+    border: none;
+    color: #fff;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &[data="taken"] { background-color: #005eff; }
+    &[data="free"] { background-color: #ff2a00; }
+    &[data="electric"] { background-color: #1ad051; }
+  }
 }
 
 footer {
