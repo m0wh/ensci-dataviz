@@ -27,12 +27,14 @@ let data = 'taken'
 const minMax = {
   taken: [9999999, 0],
   free: [9999999, 0],
+  capacity: [9999999, 0],
   electric: [9999999, 0]
 }
 
 const hueMinMax = {
   taken: [200, 230],
   free: [350, 375],
+  capacity: [15, 45],
   electric: [120, 150]
 }
 
@@ -77,10 +79,14 @@ function getData () {
 
           const velibsInTile = inTile.reduce((acc, val) => acc + val.fields.numbikesavailable, 0)
           const freeInTile = inTile.reduce((acc, val) => acc + (val.fields.capacity - val.fields.numbikesavailable), 0)
+          const capacityInTile = inTile.reduce((acc, val) => acc + val.fields.capacity, 0)
           const electricInTile = inTile.reduce((acc, val) => acc + val.fields.ebike, 0)
 
           if (velibsInTile > minMax.taken[1]) minMax.taken[1] = velibsInTile
           if (velibsInTile < minMax.taken[0]) minMax.taken[0] = velibsInTile
+
+          if (capacityInTile > minMax.capacity[1]) minMax.capacity[1] = capacityInTile
+          if (capacityInTile < minMax.capacity[0]) minMax.capacity[0] = capacityInTile
 
           if (freeInTile > minMax.free[1]) minMax.free[1] = freeInTile
           if (freeInTile < minMax.free[0]) minMax.free[0] = freeInTile
@@ -91,6 +97,7 @@ function getData () {
           row.push({
             taken: velibsInTile,
             free: freeInTile,
+            capacity: capacityInTile,
             electric: electricInTile
           })
         }
